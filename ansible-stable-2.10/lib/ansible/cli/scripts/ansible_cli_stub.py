@@ -1,29 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# (c) 2012, Michael DeHaan <michael.dehaan@gmail.com>
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-
-# PYTHON_ARGCOMPLETE_OK
 
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 __requires__ = ['ansible_base']
-
 
 import errno
 import os
@@ -35,14 +17,15 @@ from ansible import context
 from ansible.errors import AnsibleError, AnsibleOptionsError, AnsibleParserError
 from ansible.module_utils._text import to_text
 
-
 # Used for determining if the system is running a new enough python version
 # and should only restrict on our documented minimum versions
 _PY3_MIN = sys.version_info[:2] >= (3, 5)
 _PY2_MIN = (2, 6) <= sys.version_info[:2] < (3,)
 _PY_MIN = _PY3_MIN or _PY2_MIN
 if not _PY_MIN:
-    raise SystemExit('ERROR: Ansible requires a minimum of Python2 version 2.6 or Python3 version 3.5. Current version: %s' % ''.join(sys.version.splitlines()))
+    raise SystemExit(
+        'ERROR: Ansible requires a minimum of Python2 version 2.6 or Python3 version 3.5. Current version: %s' % ''.join(
+            sys.version.splitlines()))
 
 
 class LastResort(object):
@@ -58,7 +41,7 @@ if __name__ == '__main__':
 
     display = LastResort()
 
-    try:  # bad ANSIBLE_CONFIG or config options can force ugly stacktrace
+    try:  # 不良的ANSIBLE_CONFIG或配置选项可能会导致糟糕的堆栈跟踪
         import ansible.constants as C
         from ansible.utils.display import Display
     except AnsibleOptionsError as e:
@@ -115,7 +98,8 @@ if __name__ == '__main__':
         try:
             args = [to_text(a, errors='surrogate_or_strict') for a in sys.argv]
         except UnicodeError:
-            display.error('Command line args are not in utf-8, unable to continue.  Ansible currently only understands utf-8')
+            display.error(
+                'Command line args are not in utf-8, unable to continue.  Ansible currently only understands utf-8')
             display.display(u"The full traceback was:\n\n%s" % to_text(traceback.format_exc()))
             exit_code = 6
         else:
@@ -129,13 +113,13 @@ if __name__ == '__main__':
     except AnsibleParserError as e:
         display.error(to_text(e), wrap_text=False)
         exit_code = 4
-# TQM takes care of these, but leaving comment to reserve the exit codes
-#    except AnsibleHostUnreachable as e:
-#        display.error(str(e))
-#        exit_code = 3
-#    except AnsibleHostFailed as e:
-#        display.error(str(e))
-#        exit_code = 2
+    # TQM takes care of these, but leaving comment to reserve the exit codes
+    #    except AnsibleHostUnreachable as e:
+    #        display.error(str(e))
+    #        exit_code = 3
+    #    except AnsibleHostFailed as e:
+    #        display.error(str(e))
+    #        exit_code = 2
     except AnsibleError as e:
         display.error(to_text(e), wrap_text=False)
         exit_code = 1
